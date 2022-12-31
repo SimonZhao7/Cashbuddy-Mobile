@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "662932540430",
+    "project_id": "cashbuddy-mobile",
+    "storage_bucket": "cashbuddy-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662932540430:android:87932f6c1211703877005f",
+        "android_client_info": {
+          "package_name": "com.example.cashbuddy_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "662932540430-046arh2alfnblpmb5s4hj4uq37mj69ie.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6fz0yGPBIARO99nofYZukpSorxZoKu_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "662932540430-046arh2alfnblpmb5s4hj4uq37mj69ie.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "662932540430-tv8gd4huvjmupmsff6b3lc9sv9dsff4n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.cashbuddyMobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
