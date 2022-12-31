@@ -1,0 +1,1 @@
+class GenericAuthException implements Exception {}
