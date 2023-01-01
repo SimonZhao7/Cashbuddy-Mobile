@@ -1,4 +1,5 @@
 import 'package:cashbuddy_mobile/constants/colors.dart';
+import 'package:cashbuddy_mobile/constants/routes.dart';
 import 'package:cashbuddy_mobile/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -72,7 +73,9 @@ class _LoginState extends State<Login> {
             ),
             const Gap(20),
             Button(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed(registerRoute);
+              },
               label: 'Register for an account',
               icon: const Icon(
                 Icons.account_circle,

@@ -1,3 +1,4 @@
+import 'package:cashbuddy_mobile/views/register.dart';
 import 'package:flutter/material.dart';
 // Views
 import './views/login.dart';
@@ -17,6 +18,7 @@ void main() {
     initialRoute: loginRoute,
     routes: {
       loginRoute: (context) => const Login(),
+      registerRoute: (context) => const Register(),
     },
   ));
 }
