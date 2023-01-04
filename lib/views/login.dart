@@ -50,7 +50,7 @@ class _LoginState extends State<Login> {
             const Gap(60),
             Input(
               controller: _username,
-              label: 'Username',
+              label: 'Email',
             ),
             const Gap(20),
             Input(

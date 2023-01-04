@@ -26,6 +26,7 @@ class Input extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       cursorColor: Color(cursorColor),
       decoration: InputDecoration(
         hintText: label,

@@ -1,8 +1,16 @@
+// Constants
 import 'package:cashbuddy_mobile/constants/colors.dart';
+// Routes
 import 'package:cashbuddy_mobile/constants/routes.dart';
+// Snackbars
+import 'package:cashbuddy_mobile/snackbars/show_error_snackbar.dart';
+// Widgets
 import 'package:cashbuddy_mobile/widgets/button.dart';
 import 'package:cashbuddy_mobile/widgets/input.dart';
+// Firebase
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+// Util
 import 'package:gap/gap.dart';
 
 class Register extends StatefulWidget {
@@ -54,7 +62,7 @@ class _RegisterState extends State<Register> {
                   const Gap(40),
                   Input(
                     controller: _email,
-                    label: 'Enter your username...',
+                    label: 'Enter your email...',
                   ),
                   const Gap(20),
                   Input(
@@ -70,7 +78,64 @@ class _RegisterState extends State<Register> {
                   ),
                   const Gap(20),
                   Button(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final email = _email.text;
+                      final password = _password.text;
+                      final confirmPassword = _confirmPassword.text;
+                      final navigator = Navigator.of(context);
+
+                      if (password == '') {
+                        return showErrorSnackBar(context, 'No password provided');
+                      }
+
+                      if (confirmPassword == '') {
+                        return showErrorSnackBar(
+                          context,
+                          'No password confirmation provided',
+                        );
+                      }
+
+                      if (password != confirmPassword) {
+                        return showErrorSnackBar(context, 'Passwords do not match');
+                      }
+
+                      try {
+                        final userCredential = await FirebaseAuth.instance
+                            .createUserWithEmailAndPassword(
+                          email: email,
+                          password: password,
+                        );
+
+                        final user = userCredential.user!;
+                        await user.sendEmailVerification();
+
+                        navigator.pushNamedAndRemoveUntil(
+                          loginRoute,
+                          (route) => false,
+                        );
+                      } on FirebaseAuthException catch (e) {
+                        if (e.code == 'missing-email') {
+                          showErrorSnackBar(context, 'No email provided');
+                        } else if (e.code == 'invalid-email') {
+                          showErrorSnackBar(
+                            context,
+                            'The provided email is invalid',
+                          );
+                        } else if (e.code == 'email-already-in-use') {
+                          showErrorSnackBar(
+                            context,
+                            'The provided email is already in use',
+                          );
+                        } else if (e.code == 'weak-password') {
+                          showErrorSnackBar(
+                            context,
+                            'The provided password is too weak',
+                          );
+                        } else {
+                          showErrorSnackBar(context, 'Something went wrong');
+                        }
+                      }
+                    },
                     label: 'Register',
                     backgroundColor: lightGreen,
                     textColor: white,
@@ -88,7 +153,10 @@ class _RegisterState extends State<Register> {
                 child: FloatingActionButton(
                   onPressed: () {
                     Navigator.pushNamedAndRemoveUntil(
-                        context, loginRoute, (route) => false);
+                      context,
+                      loginRoute,
+                      (route) => false,
+                    );
                   },
                   backgroundColor: const Color(lightGreen),
                   child: const Icon(Icons.arrow_back),

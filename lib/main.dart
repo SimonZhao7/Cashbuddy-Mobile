@@ -1,4 +1,5 @@
 import 'package:cashbuddy_mobile/views/register.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 // Views
 import './views/login.dart';
@@ -6,7 +7,9 @@ import './views/login.dart';
 import './constants/colors.dart';
 import './constants/routes.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MaterialApp(
     title: 'Flutter Demo',
     debugShowCheckedModeBanner: false,
