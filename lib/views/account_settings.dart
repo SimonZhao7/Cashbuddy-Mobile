@@ -1,4 +1,6 @@
+import 'package:cashbuddy_mobile/util/oauth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 // Constants
 import '../constants/routes.dart';
 import 'package:cashbuddy_mobile/constants/colors.dart';
@@ -18,6 +20,7 @@ class AccountSettings extends StatelessWidget {
         onPressed: () async {
           final navigator = Navigator.of(context);
           await FirebaseAuth.instance.signOut();
+          await googleSignIn.signOut();
           navigator.pushNamedAndRemoveUntil(loginRoute, (route) => false);
         },
         label: 'Logout',

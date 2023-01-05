@@ -1,4 +1,5 @@
 import 'package:cashbuddy_mobile/constants/colors.dart';
+import 'package:cashbuddy_mobile/util/oauth.dart';
 import 'package:cashbuddy_mobile/constants/routes.dart';
 import 'package:cashbuddy_mobile/snackbars/show_error_snackbar.dart';
 // Widgets
@@ -9,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 // Util
 import 'package:gap/gap.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -33,6 +35,30 @@ class _LoginState extends State<Login> {
     _email.dispose();
     _password.dispose();
     super.dispose();
+  }
+
+  void handleNavigation(UserCredential userCredential) {
+    final navigator = Navigator.of(context);
+    final user = userCredential.user;
+
+    if (user?.emailVerified ?? false) {
+      navigator.pushNamedAndRemoveUntil(
+        homeRoute,
+        (route) => false,
+      );
+    } else {
+      showErrorSnackBar(
+        context: context,
+        text: "Email is not verified",
+        action: SnackBarAction(
+          label: 'Resend Verification',
+          onPressed: () async {
+            await user?.sendEmailVerification();
+          },
+          textColor: const Color(white),
+        ),
+      );
+    }
   }
 
   @override
@@ -67,7 +93,6 @@ class _LoginState extends State<Login> {
               onPressed: () async {
                 final email = _email.text;
                 final password = _password.text;
-                final navigator = Navigator.of(context);
 
                 try {
                   final userCredential =
@@ -75,26 +100,7 @@ class _LoginState extends State<Login> {
                     email: email,
                     password: password,
                   );
-                  final user = userCredential.user;
-
-                  if (user?.emailVerified ?? false) {
-                    navigator.pushNamedAndRemoveUntil(
-                      homeRoute,
-                      (route) => false,
-                    );
-                  } else {
-                    showErrorSnackBar(
-                      context: context,
-                      text: "Email is not verified",
-                      action: SnackBarAction(
-                        label: 'Resend Verification',
-                        onPressed: () async {
-                          await user?.sendEmailVerification();
-                        },
-                        textColor: const Color(white),
-                      ),
-                    );
-                  }
+                  handleNavigation(userCredential);
                 } on FirebaseAuthException catch (e) {
                   switch (e.code) {
                     case 'invalid-email':
@@ -119,7 +125,17 @@ class _LoginState extends State<Login> {
             ),
             const Gap(20),
             Button(
-              onPressed: () {},
+              onPressed: () async {
+                try {
+                  final userCredential = await signInWithGoogle();
+                  handleNavigation(userCredential);
+                } catch (e) {
+                  return showErrorSnackBar(
+                    context: context,
+                    text: 'Unable to sign in with Google',
+                  );
+                }
+              },
               icon: Image.asset('assets/images/google_icon.png'),
               label: 'Sign in With Google',
             ),

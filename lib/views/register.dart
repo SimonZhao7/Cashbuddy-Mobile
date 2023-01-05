@@ -152,12 +152,6 @@ class _RegisterState extends State<Register> {
                     backgroundColor: lightGreen,
                     textColor: white,
                   ),
-                  const Gap(20),
-                  Button(
-                    onPressed: () {},
-                    label: 'Sign up with Google',
-                    icon: Image.asset('assets/images/google_icon.png'),
-                  ),
                 ],
               ),
               Align(
