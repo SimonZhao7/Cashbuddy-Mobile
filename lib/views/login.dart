@@ -40,7 +40,7 @@ class _LoginState extends State<Login> {
     return Scaffold(
       backgroundColor: const Color(darkGreen),
       body: Container(
-        padding: const EdgeInsets.all(40),
+        padding: const EdgeInsets.all(30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

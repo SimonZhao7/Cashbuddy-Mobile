@@ -1,14 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+// Constants
+import 'package:cashbuddy_mobile/constants/colors.dart';
+// Views
+import 'package:cashbuddy_mobile/views/account_settings.dart';
+import 'package:cashbuddy_mobile/views/home_content.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  int _routeIndex = 0;
+  static const List<String> titles = [
+    'Home',
+    'Categories',
+    'Transactions',
+    'Account'
+  ];
+
+  static const List<Widget> views = [
+    HomeContent(),
+    HomeContent(),
+    HomeContent(),
+    AccountSettings(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
+      backgroundColor: Colors.grey.shade300,
+      appBar: AppBar(title: Text(titles[_routeIndex])),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+            backgroundColor: Color(white),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.category),
+            label: 'Categories',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.attach_money_rounded),
+            label: 'Transactions',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Account',
+          ),
+        ],
+        currentIndex: _routeIndex,
+        onTap: (int index) {
+          setState(() {
+            _routeIndex = index;
+          });
+        },
+        iconSize: 30,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
+        backgroundColor: const Color(darkGreen),
+      ),
+      body: views[_routeIndex],
     );
   }
 }
