@@ -5,12 +5,12 @@ import 'package:cashbuddy_mobile/snackbars/show_error_snackbar.dart';
 // Widgets
 import 'package:cashbuddy_mobile/widgets/input.dart';
 import 'package:cashbuddy_mobile/widgets/button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 // Firebase
 import 'package:firebase_auth/firebase_auth.dart';
 // Util
 import 'package:gap/gap.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -37,15 +37,31 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  void handleNavigation(UserCredential userCredential) {
+  void handleNavigation(UserCredential userCredential) async {
     final navigator = Navigator.of(context);
     final user = userCredential.user;
+    final db = FirebaseFirestore.instance;
 
     if (user?.emailVerified ?? false) {
-      navigator.pushNamedAndRemoveUntil(
-        homeRoute,
-        (route) => false,
-      );
+      final userData = await db
+          .collection('users')
+          .where(
+            'user_id',
+            isEqualTo: user!.uid,
+          )
+          .get();
+
+      if (userData.docs.isEmpty) {
+        navigator.pushNamedAndRemoveUntil(
+          setBudgetRoute,
+          (route) => false,
+        );
+      } else {
+        navigator.pushNamedAndRemoveUntil(
+          homeRoute,
+          (route) => false,
+        );
+      }
     } else {
       showErrorSnackBar(
         context: context,
@@ -81,6 +97,7 @@ class _LoginState extends State<Login> {
             Input(
               controller: _email,
               label: 'Email',
+              type: TextInputType.emailAddress,
             ),
             const Gap(20),
             Input(

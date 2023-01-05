@@ -63,6 +63,7 @@ class _RegisterState extends State<Register> {
                   Input(
                     controller: _email,
                     label: 'Enter your email...',
+                    type: TextInputType.emailAddress,
                   ),
                   const Gap(20),
                   Input(

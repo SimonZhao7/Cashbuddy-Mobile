@@ -1,5 +1,6 @@
 import 'package:cashbuddy_mobile/views/home.dart';
 import 'package:cashbuddy_mobile/views/register.dart';
+import 'package:cashbuddy_mobile/views/setup_budget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 // Views
@@ -24,6 +25,7 @@ void main() async {
       loginRoute: (context) => const Login(),
       registerRoute: (context) => const Register(),
       homeRoute: (context) => const Home(),
+      setBudgetRoute: (context) => const SetupBudget()
     },
   ));
 }

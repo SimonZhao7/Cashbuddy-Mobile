@@ -10,6 +10,7 @@ class Input extends StatelessWidget {
   final double borderRadius;
   final double borderWidth;
   final bool password;
+  final TextInputType type;
 
   const Input({
     super.key,
@@ -21,6 +22,7 @@ class Input extends StatelessWidget {
     this.borderRadius = 10,
     this.borderWidth = 2,
     this.password = false,
+    this.type = TextInputType.text,
   });
 
   @override
@@ -45,6 +47,7 @@ class Input extends StatelessWidget {
           ),
         ),
       ),
+      keyboardType: type,
       obscureText: password,
     );
   }
