@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import '../constants/colors.dart';
 
-void showErrorSnackBar(BuildContext context, String text) {
+void showErrorSnackBar({
+  required BuildContext context,
+  required String text,
+  SnackBarAction? action,
+}) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(
@@ -12,11 +16,12 @@ void showErrorSnackBar(BuildContext context, String text) {
       behavior: SnackBarBehavior.floating,
       padding: const EdgeInsets.only(left: 20, top: 5, bottom: 5),
       duration: const Duration(milliseconds: 2500),
-      action: SnackBarAction(
-        label: 'Ok',
-        textColor: const Color(white),
-        onPressed: () {},
-      ),
+      action: action ??
+          SnackBarAction(
+            label: 'Ok',
+            textColor: const Color(white),
+            onPressed: () {},
+          ),
     ),
   );
 }

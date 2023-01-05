@@ -85,18 +85,24 @@ class _RegisterState extends State<Register> {
                       final navigator = Navigator.of(context);
 
                       if (password == '') {
-                        return showErrorSnackBar(context, 'No password provided');
+                        return showErrorSnackBar(
+                          context: context,
+                          text: 'No password provided',
+                        );
                       }
 
                       if (confirmPassword == '') {
                         return showErrorSnackBar(
-                          context,
-                          'No password confirmation provided',
+                          context: context,
+                          text: 'No password confirmation provided',
                         );
                       }
 
                       if (password != confirmPassword) {
-                        return showErrorSnackBar(context, 'Passwords do not match');
+                        return showErrorSnackBar(
+                          context: context,
+                          text: 'Passwords do not match',
+                        );
                       }
 
                       try {
@@ -115,24 +121,30 @@ class _RegisterState extends State<Register> {
                         );
                       } on FirebaseAuthException catch (e) {
                         if (e.code == 'missing-email') {
-                          showErrorSnackBar(context, 'No email provided');
+                          showErrorSnackBar(
+                            context: context,
+                            text: 'No email provided',
+                          );
                         } else if (e.code == 'invalid-email') {
                           showErrorSnackBar(
-                            context,
-                            'The provided email is invalid',
+                            context: context,
+                            text: 'The provided email is invalid',
                           );
                         } else if (e.code == 'email-already-in-use') {
                           showErrorSnackBar(
-                            context,
-                            'The provided email is already in use',
+                            context: context,
+                            text: 'The provided email is already in use',
                           );
                         } else if (e.code == 'weak-password') {
                           showErrorSnackBar(
-                            context,
-                            'The provided password is too weak',
+                            context: context,
+                            text: 'The provided password is too weak',
                           );
                         } else {
-                          showErrorSnackBar(context, 'Something went wrong');
+                          showErrorSnackBar(
+                            context: context,
+                            text: 'Something went wrong',
+                          );
                         }
                       }
                     },

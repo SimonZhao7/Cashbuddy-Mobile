@@ -1,10 +1,14 @@
 import 'package:cashbuddy_mobile/constants/colors.dart';
 import 'package:cashbuddy_mobile/constants/routes.dart';
-import 'package:cashbuddy_mobile/widgets/button.dart';
-import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+import 'package:cashbuddy_mobile/snackbars/show_error_snackbar.dart';
 // Widgets
-import '../widgets/input.dart';
+import 'package:cashbuddy_mobile/widgets/input.dart';
+import 'package:cashbuddy_mobile/widgets/button.dart';
+// Firebase
+import 'package:firebase_auth/firebase_auth.dart';
+// Util
+import 'package:gap/gap.dart';
+import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -14,19 +18,19 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  late TextEditingController _username;
+  late TextEditingController _email;
   late TextEditingController _password;
 
   @override
   void initState() {
-    _username = TextEditingController();
+    _email = TextEditingController();
     _password = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
-    _username.dispose();
+    _email.dispose();
     _password.dispose();
     super.dispose();
   }
@@ -49,7 +53,7 @@ class _LoginState extends State<Login> {
             ),
             const Gap(60),
             Input(
-              controller: _username,
+              controller: _email,
               label: 'Email',
             ),
             const Gap(20),
@@ -60,7 +64,55 @@ class _LoginState extends State<Login> {
             ),
             const Gap(20),
             Button(
-              onPressed: () {},
+              onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
+                final navigator = Navigator.of(context);
+
+                try {
+                  final userCredential =
+                      await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: email,
+                    password: password,
+                  );
+                  final user = userCredential.user;
+
+                  if (user?.emailVerified ?? false) {
+                    navigator.pushNamedAndRemoveUntil(
+                      homeRoute,
+                      (route) => false,
+                    );
+                  } else {
+                    showErrorSnackBar(
+                      context: context,
+                      text: "Email is not verified",
+                      action: SnackBarAction(
+                        label: 'Resend Verification',
+                        onPressed: () async {
+                          await user?.sendEmailVerification();
+                        },
+                        textColor: const Color(white),
+                      ),
+                    );
+                  }
+                } on FirebaseAuthException catch (e) {
+                  switch (e.code) {
+                    case 'invalid-email':
+                    case 'user-disabled':
+                    case 'user-not-found':
+                    case 'wrong-password':
+                      return showErrorSnackBar(
+                        context: context,
+                        text: 'Invalid login credentials',
+                      );
+                    default:
+                      return showErrorSnackBar(
+                        context: context,
+                        text: 'Something went wrong',
+                      );
+                  }
+                }
+              },
               backgroundColor: lightGreen,
               textColor: white,
               label: 'Login',
