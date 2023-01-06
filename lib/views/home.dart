@@ -1,3 +1,4 @@
+import 'package:cashbuddy_mobile/views/view_categories.dart';
 import 'package:flutter/material.dart';
 // Constants
 import 'package:cashbuddy_mobile/constants/colors.dart';
@@ -23,9 +24,20 @@ class _HomeState extends State<Home> {
 
   static const List<Widget> views = [
     HomeContent(),
-    HomeContent(),
+    ViewCategories(),
     HomeContent(),
     AccountSettings(),
+  ];
+
+  static List<Widget?> floatingActionButtons = [
+    null,
+    FloatingActionButton(
+      onPressed: () {},
+      backgroundColor: const Color(darkGreen),
+      child: const Icon(Icons.add),
+    ),
+    null,
+    null
   ];
 
   @override
@@ -66,6 +78,7 @@ class _HomeState extends State<Home> {
         backgroundColor: const Color(darkGreen),
       ),
       body: views[_routeIndex],
+      floatingActionButton: floatingActionButtons[_routeIndex],
     );
   }
 }
