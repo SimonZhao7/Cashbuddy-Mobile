@@ -1,3 +1,4 @@
+import 'package:cashbuddy_mobile/constants/routes.dart';
 import 'package:cashbuddy_mobile/views/view_categories.dart';
 import 'package:flutter/material.dart';
 // Constants
@@ -29,19 +30,21 @@ class _HomeState extends State<Home> {
     AccountSettings(),
   ];
 
-  static List<Widget?> floatingActionButtons = [
-    null,
-    FloatingActionButton(
-      onPressed: () {},
-      backgroundColor: const Color(darkGreen),
-      child: const Icon(Icons.add),
-    ),
-    null,
-    null
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final List<Widget?> floatingActionButtons = [
+      null,
+      FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(createCategoriesRoute);
+        },
+        backgroundColor: const Color(darkGreen),
+        child: const Icon(Icons.add),
+      ),
+      null,
+      null
+    ];
+
     return Scaffold(
       backgroundColor: Colors.grey.shade300,
       appBar: AppBar(title: Text(titles[_routeIndex])),

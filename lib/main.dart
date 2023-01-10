@@ -1,3 +1,4 @@
+import 'package:cashbuddy_mobile/views/create_category.dart';
 import 'package:cashbuddy_mobile/views/home.dart';
 import 'package:cashbuddy_mobile/views/register.dart';
 import 'package:cashbuddy_mobile/views/setup_budget.dart';
@@ -28,6 +29,7 @@ void main() async {
       homeRoute: (context) => const Home(),
       setBudgetRoute: (context) => const SetupBudget(),
       viewCategoriesRoute: (context) => const ViewCategories(),
+      createCategoriesRoute: (context) => const CreateCategory(),
     },
   ));
 }

@@ -10,6 +10,7 @@ class Input extends StatelessWidget {
   final double borderRadius;
   final double borderWidth;
   final bool password;
+  final bool autofocus;
   final TextInputType type;
 
   const Input({
@@ -23,12 +24,14 @@ class Input extends StatelessWidget {
     this.borderWidth = 2,
     this.password = false,
     this.type = TextInputType.text,
+    this.autofocus = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      autofocus: autofocus,
       cursorColor: Color(cursorColor),
       decoration: InputDecoration(
         hintText: label,

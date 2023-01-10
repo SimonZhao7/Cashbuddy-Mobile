@@ -35,9 +35,9 @@ class _ViewCategoriesState extends State<ViewCategories> {
         switch (snapshot.connectionState) {
           case ConnectionState.active:
           case ConnectionState.done:
-            return ListView.builder(
+            return ListView.separated(
               padding: const EdgeInsets.all(20),
-              itemCount: snapshot.data?.size,
+              itemCount: snapshot.data!.size,
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(snapshot.data?.docs[index].data()['title']),
@@ -63,6 +63,9 @@ class _ViewCategoriesState extends State<ViewCategories> {
                     ),
                   ]),
                 );
+              },
+              separatorBuilder: (context, index) {
+                return const Gap(20);
               },
             );
           default:
