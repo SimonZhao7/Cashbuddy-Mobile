@@ -1,4 +1,5 @@
 import 'package:cashbuddy_mobile/constants/colors.dart';
+import 'package:cashbuddy_mobile/snackbars/show_error_snackbar.dart';
 import 'package:cashbuddy_mobile/widgets/button.dart';
 import 'package:cashbuddy_mobile/widgets/input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,9 +31,16 @@ class _CreateCategoryState extends State<CreateCategory> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments as List<String>?;
+    final id = args?[0];
+    final title = args?[1];
+    _category.text = title ?? '';
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create a new category'),
+        title: Text(
+          id == null ? 'Create a new category' : 'Update category',
+        ),
       ),
       backgroundColor: Colors.grey.shade300,
       body: Container(
@@ -54,14 +62,28 @@ class _CreateCategoryState extends State<CreateCategory> {
                 final navigator = Navigator.of(context);
                 final categoryName = _category.text;
 
-                await db.collection('categories').add({
-                  'title': categoryName,
-                  'user_id': user.uid,
-                });
+                if (categoryName.trim().isEmpty) {
+                  showErrorSnackBar(
+                    context: context,
+                    text: 'No title provided',
+                  );
+                  return;
+                }
+
+                if (id != null) {
+                  await db.collection('categories').doc(id).update({
+                    'title': categoryName,
+                  });
+                } else {
+                  await db.collection('categories').add({
+                    'title': categoryName,
+                    'user_id': user.uid,
+                  });
+                }
 
                 navigator.pop();
               },
-              label: 'Create',
+              label: id == null ? 'Create' : 'Update',
               backgroundColor: darkGreen,
               textColor: white,
             )

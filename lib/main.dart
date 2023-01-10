@@ -29,7 +29,7 @@ void main() async {
       homeRoute: (context) => const Home(),
       setBudgetRoute: (context) => const SetupBudget(),
       viewCategoriesRoute: (context) => const ViewCategories(),
-      createCategoriesRoute: (context) => const CreateCategory(),
+      createOrUpdateCategoryRoute: (context) => const CreateCategory(),
     },
   ));
 }

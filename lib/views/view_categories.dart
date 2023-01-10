@@ -1,3 +1,4 @@
+import 'package:cashbuddy_mobile/constants/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 // Constants
@@ -29,6 +30,8 @@ class _ViewCategoriesState extends State<ViewCategories> {
 
   @override
   Widget build(BuildContext context) {
+    final navigator = Navigator.of(context);
+
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: categories,
       builder: (context, snapshot) {
@@ -39,8 +42,10 @@ class _ViewCategoriesState extends State<ViewCategories> {
               padding: const EdgeInsets.all(20),
               itemCount: snapshot.data!.size,
               itemBuilder: (context, index) {
+                final title = snapshot.data!.docs[index].data()['title'] as String;
+                final id = snapshot.data!.docs[index].id;
                 return ListTile(
-                  title: Text(snapshot.data?.docs[index].data()['title']),
+                  title: Text(title),
                   tileColor: const Color(white),
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(
@@ -52,7 +57,12 @@ class _ViewCategoriesState extends State<ViewCategories> {
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       icon: const Icon(Icons.edit),
-                      onPressed: () {},
+                      onPressed: () {
+                        navigator.pushNamed(
+                          createOrUpdateCategoryRoute,
+                          arguments: [id, title],
+                        );
+                      },
                     ),
                     const Gap(10),
                     IconButton(

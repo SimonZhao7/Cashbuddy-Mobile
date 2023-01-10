@@ -36,7 +36,7 @@ class _HomeState extends State<Home> {
       null,
       FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(createCategoriesRoute);
+          Navigator.of(context).pushNamed(createOrUpdateCategoryRoute);
         },
         backgroundColor: const Color(darkGreen),
         child: const Icon(Icons.add),
