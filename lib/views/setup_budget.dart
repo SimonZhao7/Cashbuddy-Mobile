@@ -1,10 +1,10 @@
 import 'package:cashbuddy_mobile/constants/colors.dart';
 import 'package:cashbuddy_mobile/constants/routes.dart';
+import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
 import 'package:cashbuddy_mobile/snackbars/show_error_snackbar.dart';
 import 'package:cashbuddy_mobile/widgets/button.dart';
 import 'package:cashbuddy_mobile/widgets/input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -65,7 +65,7 @@ class _SetupBudgetState extends State<SetupBudget> {
               onPressed: () async {
                 final budget = _budget.text;
                 final db = FirebaseFirestore.instance;
-                final currentUser = FirebaseAuth.instance.currentUser!;
+                final currentUser = AuthService.email().currentUser;
                 final navigator = Navigator.of(context);
 
                 if (budget == '') {
@@ -85,7 +85,7 @@ class _SetupBudgetState extends State<SetupBudget> {
                 }
 
                 await db.collection('users').add({
-                  'user_id': currentUser.uid,
+                  'user_id': currentUser.id,
                   'budget': convertedBudget,
                 });
                 navigator.pushNamedAndRemoveUntil(homeRoute, (route) => false);

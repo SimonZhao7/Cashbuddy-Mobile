@@ -1,16 +1,17 @@
 import 'package:cashbuddy_mobile/constants/colors.dart';
-import 'package:cashbuddy_mobile/util/oauth.dart';
+import 'package:cashbuddy_mobile/exceptions/auth_exceptions.dart';
+import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
 import 'package:cashbuddy_mobile/constants/routes.dart';
 import 'package:cashbuddy_mobile/snackbars/show_error_snackbar.dart';
 // Widgets
 import 'package:cashbuddy_mobile/widgets/input.dart';
 import 'package:cashbuddy_mobile/widgets/button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// Firebase
-import 'package:firebase_auth/firebase_auth.dart';
 // Util
 import 'package:gap/gap.dart';
 import 'package:flutter/material.dart';
+
+import '../services/auth/auth_user.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -22,6 +23,8 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   late TextEditingController _email;
   late TextEditingController _password;
+  final emailAuth = AuthService.email();
+  final googleAuth = AuthService.google();
 
   @override
   void initState() {
@@ -37,17 +40,16 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  void handleNavigation(UserCredential userCredential) async {
+  void handleNavigation(AuthUser user) async {
     final navigator = Navigator.of(context);
-    final user = userCredential.user;
     final db = FirebaseFirestore.instance;
 
-    if (user?.emailVerified ?? false) {
+    if (user.isEmailVerified) {
       final userData = await db
           .collection('users')
           .where(
             'user_id',
-            isEqualTo: user!.uid,
+            isEqualTo: user.id,
           )
           .get();
 
@@ -69,7 +71,16 @@ class _LoginState extends State<Login> {
         action: SnackBarAction(
           label: 'Resend Verification',
           onPressed: () async {
-            await user?.sendEmailVerification();
+            try {
+              await emailAuth.sendEmailVerification();
+            } catch (e) {
+              if (e is TooManyRequestsException) {
+                showErrorSnackBar(
+                  context: context,
+                  text: 'Please wait before requesting another email.',
+                );
+              }
+            }
           },
           textColor: const Color(white),
         ),
@@ -112,27 +123,24 @@ class _LoginState extends State<Login> {
                 final password = _password.text;
 
                 try {
-                  final userCredential =
-                      await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  final user = await emailAuth.login(
                     email: email,
                     password: password,
                   );
-                  handleNavigation(userCredential);
-                } on FirebaseAuthException catch (e) {
-                  switch (e.code) {
-                    case 'invalid-email':
-                    case 'user-disabled':
-                    case 'user-not-found':
-                    case 'wrong-password':
-                      return showErrorSnackBar(
-                        context: context,
-                        text: 'Invalid login credentials',
-                      );
-                    default:
-                      return showErrorSnackBar(
-                        context: context,
-                        text: 'Something went wrong',
-                      );
+                  handleNavigation(user);
+                } catch (e) {
+                  if (e is InvalidEmailAuthException ||
+                      e is UserNotFoundAuthException ||
+                      e is WrongPasswordAuthException) {
+                    return showErrorSnackBar(
+                      context: context,
+                      text: 'Invalid login credentials',
+                    );
+                  } else {
+                    return showErrorSnackBar(
+                      context: context,
+                      text: 'Something went wrong',
+                    );
                   }
                 }
               },
@@ -144,8 +152,11 @@ class _LoginState extends State<Login> {
             Button(
               onPressed: () async {
                 try {
-                  final userCredential = await signInWithGoogle();
-                  handleNavigation(userCredential);
+                  final user = await googleAuth.login(
+                    email: '',
+                    password: '',
+                  );
+                  handleNavigation(user);
                 } catch (e) {
                   return showErrorSnackBar(
                     context: context,

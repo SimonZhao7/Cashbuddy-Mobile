@@ -1,11 +1,8 @@
-import 'package:cashbuddy_mobile/util/oauth.dart';
+import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 // Constants
 import '../constants/routes.dart';
 import 'package:cashbuddy_mobile/constants/colors.dart';
-// Firebase
-import 'package:firebase_auth/firebase_auth.dart';
 // Widgets
 import 'package:cashbuddy_mobile/widgets/button.dart';
 
@@ -19,8 +16,8 @@ class AccountSettings extends StatelessWidget {
       child: Button(
         onPressed: () async {
           final navigator = Navigator.of(context);
-          await FirebaseAuth.instance.signOut();
-          await googleSignIn.signOut();
+          await AuthService.email().logout();
+         await AuthService.google().logout();
           navigator.pushNamedAndRemoveUntil(loginRoute, (route) => false);
         },
         label: 'Logout',

@@ -1,9 +1,10 @@
+import 'package:cashbuddy_mobile/services/auth/auth_provider.dart';
+import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
 import 'package:cashbuddy_mobile/views/create_category.dart';
 import 'package:cashbuddy_mobile/views/home.dart';
 import 'package:cashbuddy_mobile/views/register.dart';
 import 'package:cashbuddy_mobile/views/setup_budget.dart';
 import 'package:cashbuddy_mobile/views/view_categories.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 // Views
 import './views/login.dart';
@@ -13,7 +14,7 @@ import './constants/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await AuthService.initialize();
   runApp(MaterialApp(
     title: 'Flutter Demo',
     debugShowCheckedModeBanner: false,

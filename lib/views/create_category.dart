@@ -1,9 +1,9 @@
 import 'package:cashbuddy_mobile/constants/colors.dart';
+import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
 import 'package:cashbuddy_mobile/snackbars/show_error_snackbar.dart';
 import 'package:cashbuddy_mobile/widgets/button.dart';
 import 'package:cashbuddy_mobile/widgets/input.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -58,7 +58,7 @@ class _CreateCategoryState extends State<CreateCategory> {
             Button(
               onPressed: () async {
                 final db = FirebaseFirestore.instance;
-                final user = FirebaseAuth.instance.currentUser!;
+                final user = AuthService.email().currentUser;
                 final navigator = Navigator.of(context);
                 final categoryName = _category.text;
 
@@ -77,7 +77,7 @@ class _CreateCategoryState extends State<CreateCategory> {
                 } else {
                   await db.collection('categories').add({
                     'title': categoryName,
-                    'user_id': user.uid,
+                    'user_id': user.id,
                   });
                 }
 

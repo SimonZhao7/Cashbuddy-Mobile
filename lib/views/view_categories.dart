@@ -1,4 +1,5 @@
 import 'package:cashbuddy_mobile/constants/routes.dart';
+import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -7,7 +8,6 @@ import 'package:gap/gap.dart';
 import 'package:cashbuddy_mobile/constants/colors.dart';
 // Firebase
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ViewCategories extends StatefulWidget {
   const ViewCategories({super.key});
@@ -22,7 +22,7 @@ class _ViewCategoriesState extends State<ViewCategories> {
   @override
   void initState() {
     final db = FirebaseFirestore.instance;
-    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final userId = AuthService.email().currentUser.id;
     final query =
         db.collection('categories').where('user_id', isEqualTo: userId);
 
