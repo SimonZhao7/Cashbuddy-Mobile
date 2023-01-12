@@ -1,11 +1,15 @@
-import 'package:cashbuddy_mobile/constants/colors.dart';
-import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
+import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+// Services
+import '../services/category/category_service.dart';
+// Widgets
 import 'package:cashbuddy_mobile/snackbars/show_error_snackbar.dart';
 import 'package:cashbuddy_mobile/widgets/button.dart';
 import 'package:cashbuddy_mobile/widgets/input.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+// Constants
+import 'package:cashbuddy_mobile/constants/colors.dart';
+// Exceptions
+import 'package:cashbuddy_mobile/exceptions/category_exceptions.dart';
 
 class CreateCategory extends StatefulWidget {
   const CreateCategory({super.key});
@@ -16,10 +20,12 @@ class CreateCategory extends StatefulWidget {
 
 class _CreateCategoryState extends State<CreateCategory> {
   late TextEditingController _category;
+  late CategoryService _categoryService;
 
   @override
   void initState() {
     _category = TextEditingController();
+    _categoryService = CategoryService();
     super.initState();
   }
 
@@ -57,31 +63,29 @@ class _CreateCategoryState extends State<CreateCategory> {
             const Gap(20),
             Button(
               onPressed: () async {
-                final db = FirebaseFirestore.instance;
-                final user = AuthService.email().currentUser;
-                final navigator = Navigator.of(context);
-                final categoryName = _category.text;
+                try {
+                  final navigator = Navigator.of(context);
+                  final categoryName = _category.text;
 
-                if (categoryName.trim().isEmpty) {
-                  showErrorSnackBar(
-                    context: context,
-                    text: 'No title provided',
-                  );
-                  return;
+                  if (id != null) {
+                    await _categoryService.updateCategory(
+                      id: id,
+                      title: categoryName,
+                    );
+                  } else {
+                    await _categoryService.createCategory(
+                      title: categoryName,
+                    );
+                  }
+                  navigator.pop();
+                } catch (e) {
+                  if (e is NoTitleProvidedException) {
+                    showErrorSnackBar(
+                      context: context,
+                      text: 'No title provided',
+                    );
+                  }
                 }
-
-                if (id != null) {
-                  await db.collection('categories').doc(id).update({
-                    'title': categoryName,
-                  });
-                } else {
-                  await db.collection('categories').add({
-                    'title': categoryName,
-                    'user_id': user.id,
-                  });
-                }
-
-                navigator.pop();
               },
               label: id == null ? 'Create' : 'Update',
               backgroundColor: darkGreen,

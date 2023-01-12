@@ -1,0 +1,1 @@
+class NoTitleProvidedException implements Exception {}

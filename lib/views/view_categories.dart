@@ -1,13 +1,13 @@
-import 'package:cashbuddy_mobile/constants/routes.dart';
-import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:gap/gap.dart';
+// Services
+import 'package:cashbuddy_mobile/services/category/category_service.dart';
+import '../services/category/category.dart';
 // Constants
 import 'package:cashbuddy_mobile/constants/colors.dart';
-// Firebase
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cashbuddy_mobile/constants/routes.dart';
 
 class ViewCategories extends StatefulWidget {
   const ViewCategories({super.key});
@@ -17,16 +17,13 @@ class ViewCategories extends StatefulWidget {
 }
 
 class _ViewCategoriesState extends State<ViewCategories> {
-  late Stream<QuerySnapshot<Map<String, dynamic>>> categories;
+  late CategoryService _categoryService;
+  late Stream<List<Category>> _categories;
 
   @override
   void initState() {
-    final db = FirebaseFirestore.instance;
-    final userId = AuthService.email().currentUser.id;
-    final query =
-        db.collection('categories').where('user_id', isEqualTo: userId);
-
-    categories = query.snapshots();
+    _categoryService = CategoryService();
+    _categories = _categoryService.fetchCategories();
     super.initState();
   }
 
@@ -100,19 +97,19 @@ class _ViewCategoriesState extends State<ViewCategories> {
   Widget build(BuildContext context) {
     final navigator = Navigator.of(context);
 
-    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-      stream: categories,
+    return StreamBuilder<List<Category>>(
+      stream: _categories,
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.active:
           case ConnectionState.done:
+            final data = snapshot.data!;
             return ListView.separated(
               padding: const EdgeInsets.all(20),
-              itemCount: snapshot.data!.size,
+              itemCount: data.length,
               itemBuilder: (context, index) {
-                final title =
-                    snapshot.data!.docs[index].data()['title'] as String;
-                final id = snapshot.data!.docs[index].id;
+                final title = data[index].title;
+                final id = data[index].id;
                 return ListTile(
                   title: Text(title),
                   tileColor: const Color(white),
@@ -139,11 +136,9 @@ class _ViewCategoriesState extends State<ViewCategories> {
                       constraints: const BoxConstraints(),
                       icon: const Icon(Icons.delete),
                       onPressed: () async {
-                        final db = FirebaseFirestore.instance;
                         final result = await showNativeDialog(context);
-
                         if (result) {
-                          await db.collection('categories').doc(id).delete();
+                          await _categoryService.deleteCategory(id: id);
                         }
                       },
                     ),
