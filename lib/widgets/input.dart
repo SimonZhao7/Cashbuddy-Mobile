@@ -6,6 +6,7 @@ class Input extends StatelessWidget {
   final int borderColor;
   final int backgroundColor;
   final int cursorColor;
+  final int maxLines;
   final String label;
   final double borderRadius;
   final double borderWidth;
@@ -25,6 +26,7 @@ class Input extends StatelessWidget {
     this.password = false,
     this.type = TextInputType.text,
     this.autofocus = false,
+    this.maxLines = 1,
   });
 
   @override
@@ -52,6 +54,7 @@ class Input extends StatelessWidget {
       ),
       keyboardType: type,
       obscureText: password,
+      maxLines: maxLines,
     );
   }
 }

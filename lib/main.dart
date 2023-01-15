@@ -1,6 +1,6 @@
-import 'package:cashbuddy_mobile/services/auth/auth_provider.dart';
 import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
 import 'package:cashbuddy_mobile/views/create_category.dart';
+import 'package:cashbuddy_mobile/views/create_transaction.dart';
 import 'package:cashbuddy_mobile/views/home.dart';
 import 'package:cashbuddy_mobile/views/register.dart';
 import 'package:cashbuddy_mobile/views/setup_budget.dart';
@@ -19,10 +19,12 @@ void main() async {
     title: 'Flutter Demo',
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(darkGreen),
-      ),
-    ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(darkGreen),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color(darkGreen),
+        )),
     initialRoute: loginRoute,
     routes: {
       loginRoute: (context) => const Login(),
@@ -31,6 +33,7 @@ void main() async {
       setBudgetRoute: (context) => const SetupBudget(),
       viewCategoriesRoute: (context) => const ViewCategories(),
       createOrUpdateCategoryRoute: (context) => const CreateCategory(),
+      createOrUpdateTransaction: (context) => const CreateTransaction(),
     },
   ));
 }

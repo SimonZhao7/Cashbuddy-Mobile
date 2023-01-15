@@ -6,6 +6,7 @@ import 'package:cashbuddy_mobile/constants/colors.dart';
 // Views
 import 'package:cashbuddy_mobile/views/account_settings.dart';
 import 'package:cashbuddy_mobile/views/home_content.dart';
+import 'package:gap/gap.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -33,12 +34,22 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final List<Widget?> floatingActionButtons = [
-      null,
+      FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).pushNamed(createOrUpdateTransaction);
+        },
+        label: Row(
+          children: const [
+            Icon(Icons.add),
+            Gap(6),
+            Text('Add Transaction'),
+          ],
+        ),
+      ),
       FloatingActionButton(
         onPressed: () {
           Navigator.of(context).pushNamed(createOrUpdateCategoryRoute);
         },
-        backgroundColor: const Color(darkGreen),
         child: const Icon(Icons.add),
       ),
       null,
