@@ -1,11 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cashbuddy_mobile/exceptions/transaction_exceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:gap/gap.dart';
 // Services
 import '../services/category/category_service.dart';
-import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
 // Widgets
+import '../services/transaction/transaction_service.dart';
 import '../widgets/button.dart';
 import 'package:cashbuddy_mobile/widgets/input.dart';
 import 'package:cashbuddy_mobile/snackbars/show_error_snackbar.dart';
@@ -24,6 +24,7 @@ class _CreateTransactionState extends State<CreateTransaction> {
   late TextEditingController _details;
   late TextEditingController _amount;
   late CategoryService _categoryService;
+  late TransactionService _transactionService;
   String? _selected;
   DateTime? date;
   TimeOfDay? time;
@@ -34,12 +35,15 @@ class _CreateTransactionState extends State<CreateTransaction> {
     _details = TextEditingController();
     _amount = TextEditingController();
     _categoryService = CategoryService();
+    _transactionService = TransactionService();
     super.initState();
   }
 
   @override
   void dispose() {
     _title.dispose();
+    _details.dispose();
+    _amount.dispose();
     super.dispose();
   }
 
@@ -153,76 +157,64 @@ class _CreateTransactionState extends State<CreateTransaction> {
                 Button(
                   onPressed: () async {
                     try {
-                      final db = FirebaseFirestore.instance;
-                      final user = AuthService.email().currentUser;
                       final navigator = Navigator.of(context);
-
                       final title = _title.text;
                       final details = _details.text;
-                      final amount = double.tryParse(_amount.text);
-                      final selectedDate = date;
-                      final selectedTime = time;
-                      final selectedCategory = _selected;
+                      final amount = _amount.text;
 
-                      if (selectedCategory == null) {
+                      await _transactionService.createTransaction(
+                        selectedCategory: _selected,
+                        title: title,
+                        amount: amount,
+                        details: details,
+                        date: date,
+                        time: time,
+                      );
+
+                      navigator.pop();
+                    } catch (e) {
+                      if (e is NoCategorySelectedException) {
                         return showErrorSnackBar(
                           context: context,
                           text: 'No category selected',
                         );
                       }
 
-                      if (title.trim().isEmpty) {
+                      if (e is NoTitleProvidedException) {
                         return showErrorSnackBar(
                           context: context,
                           text: 'No title provided',
                         );
                       }
 
-                      if (amount == null) {
+                      if (e is NoAmountProvidedException) {
+                        return showErrorSnackBar(
+                          context: context,
+                          text: 'No amount provided',
+                        );
+                      }
+
+                      if (e is InvalidAmountTypeException) {
                         return showErrorSnackBar(
                           context: context,
                           text: 'Invalid amount provided',
                         );
                       }
 
-                      if (selectedDate == null) {
+                      if (e is NoDateSelectedException) {
                         return showErrorSnackBar(
                           context: context,
                           text: 'No date selected',
                         );
                       }
 
-                      if (selectedTime == null) {
+                      if (e is NoTimeSelectedException) {
                         return showErrorSnackBar(
                           context: context,
                           text: 'No time selected',
                         );
                       }
 
-                      final categoryId = data
-                          .firstWhere(
-                            (category) => category.title == selectedCategory,
-                          )
-                          .id;
-
-                      final dateTime = selectedDate.add(
-                        Duration(
-                          hours: selectedTime.hour,
-                          minutes: selectedTime.minute,
-                        ),
-                      );
-
-                      await db.collection('transactions').add({
-                        'user_id': user.id,
-                        'category_id': categoryId,
-                        'title': title,
-                        'details': details,
-                        'amount': amount,
-                        'date_time': dateTime,
-                      });
-
-                      navigator.pop();
-                    } catch (e) {
                       showErrorSnackBar(
                         context: context,
                         text: 'Could not create a transaction',
