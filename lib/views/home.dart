@@ -1,5 +1,6 @@
 import 'package:cashbuddy_mobile/constants/routes.dart';
 import 'package:cashbuddy_mobile/views/view_categories.dart';
+import 'package:cashbuddy_mobile/views/view_transactions.dart';
 import 'package:flutter/material.dart';
 // Constants
 import 'package:cashbuddy_mobile/constants/colors.dart';
@@ -27,7 +28,7 @@ class _HomeState extends State<Home> {
   static const List<Widget> views = [
     HomeContent(),
     ViewCategories(),
-    HomeContent(),
+    ViewTransactions(),
     AccountSettings(),
   ];
 
@@ -36,7 +37,7 @@ class _HomeState extends State<Home> {
     final List<Widget?> floatingActionButtons = [
       FloatingActionButton.extended(
         onPressed: () {
-          Navigator.of(context).pushNamed(createOrUpdateTransaction);
+          Navigator.of(context).pushNamed(createOrUpdateTransactionRoute);
         },
         label: Row(
           children: const [

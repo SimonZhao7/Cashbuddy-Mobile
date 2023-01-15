@@ -5,6 +5,7 @@ import 'package:cashbuddy_mobile/views/home.dart';
 import 'package:cashbuddy_mobile/views/register.dart';
 import 'package:cashbuddy_mobile/views/setup_budget.dart';
 import 'package:cashbuddy_mobile/views/view_categories.dart';
+import 'package:cashbuddy_mobile/views/view_transactions.dart';
 import 'package:flutter/material.dart';
 // Views
 import './views/login.dart';
@@ -33,7 +34,8 @@ void main() async {
       setBudgetRoute: (context) => const SetupBudget(),
       viewCategoriesRoute: (context) => const ViewCategories(),
       createOrUpdateCategoryRoute: (context) => const CreateCategory(),
-      createOrUpdateTransaction: (context) => const CreateTransaction(),
+      createOrUpdateTransactionRoute: (context) => const CreateTransaction(),
+      viewTransactionsRoute: (context) => const ViewTransactions(),
     },
   ));
 }
