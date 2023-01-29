@@ -1,9 +1,13 @@
-import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import '../../exceptions/transaction_exceptions.dart';
+// Firebase
+import 'package:cloud_firestore/cloud_firestore.dart' hide Transaction;
+// Services
+import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
 import '../category/category_service.dart';
+import './transaction.dart';
+// Exceptions
+import '../../exceptions/transaction_exceptions.dart';
+// Constants
 import 'fields.dart';
 
 class TransactionService {
@@ -14,6 +18,18 @@ class TransactionService {
 
   TransactionService._sharedInstance();
   factory TransactionService() => _shared;
+
+  Stream<List<Transaction>> transactions() {
+    return collection
+        .where(
+          userIdField,
+          isEqualTo: user.id,
+        )
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs.map(Transaction.fromFirebase).toList(),
+        );
+  }
 
   Future<void> createTransaction({
     required String? selectedCategory,
@@ -45,7 +61,7 @@ class TransactionService {
     });
   }
 
-  Future<void> updateCategory({
+  Future<void> updateTransaction({
     required String? selectedCategory,
     required String title,
     required String details,

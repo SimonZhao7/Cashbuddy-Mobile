@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-// Firebase
-import 'package:cloud_firestore/cloud_firestore.dart';
 // Services
-import 'package:cashbuddy_mobile/services/auth/auth_service.dart';
+import '../services/transaction/transaction.dart';
+import '../services/transaction/transaction_service.dart';
 // Constants
 import 'package:cashbuddy_mobile/constants/colors.dart';
 import 'package:cashbuddy_mobile/constants/routes.dart';
@@ -19,32 +18,36 @@ class ViewTransactions extends StatefulWidget {
 }
 
 class _ViewTransactionsState extends State<ViewTransactions> {
+  late TransactionService _transactionService;
+  late Stream<List<Transaction>> _transactions;
+
+  @override
+  void initState() {
+    _transactionService = TransactionService();
+    _transactions = _transactionService.transactions();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final user = AuthService.email().currentUser;
     return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('transactions')
-          .where('user_id', isEqualTo: user.id)
-          .snapshots(),
+      stream: _transactions,
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.active:
           case ConnectionState.done:
-            final data = snapshot.data!;
-            final transactions = data.docs;
+            final transactions = snapshot.data!;
             return ListView.separated(
                 padding: const EdgeInsets.all(20),
                 itemBuilder: (context, index) {
-                  final transactionId = transactions[index].id;
-                  final transaction = transactions[index].data();
+                  final transaction = transactions[index];
                   return ListTile(
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 15,
                       vertical: 5,
                     ),
                     title: Text(
-                      transaction['title'],
+                      transaction.title,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
@@ -52,14 +55,14 @@ class _ViewTransactionsState extends State<ViewTransactions> {
                     ),
                     tileColor: const Color(white),
                     subtitle: Text(
-                      transaction['details'],
+                      transaction.details,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     trailing: Text(
                       Money.fromDecimal(
                               Decimal.parse(
-                                transaction['amount'].toString(),
+                                transaction.amount.toString(),
                               ),
                               code: 'USD')
                           .toString(),
@@ -72,7 +75,7 @@ class _ViewTransactionsState extends State<ViewTransactions> {
                     onTap: () {
                       Navigator.of(context).pushNamed(
                         createOrUpdateTransactionRoute,
-                        arguments: {...transaction, 'id': transactionId},
+                        arguments: transaction,
                       );
                     },
                   );
